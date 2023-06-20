@@ -87,4 +87,8 @@ class Pipeline:
 
         return text_list
     
-    def _get_part_of_words(self)
+    def _get_part_of_words(self, answer: str):
+
+        document = self._nlp_model(answer)
+
+
