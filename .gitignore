@@ -1,5 +1,15 @@
+# IDE
 __pycache__
 
+# virtual environments
 .venv
+poetry.lock
+
+# data
 /data
 /datasets
+
+# creds
+.env
+/creds
+/tables

@@ -1,0 +1,6 @@
+[core]
+    remote = myremote
+['remote "myremote"']
+    url = gdrive://1aWNDlXxmhy5rcFVoE2pCRpDOPcOG4atS
+    gdrive_use_service_account = true
+    gdrive_service_account_json_file_path = ../creds/levart-390316-173de7eafcad.json

@@ -1,0 +1,5 @@
+outs:
+- md5: d1f75c60372356f795e7c45b30b0cc0d.dir
+  size: 2667
+  nfiles: 2
+  path: creds
