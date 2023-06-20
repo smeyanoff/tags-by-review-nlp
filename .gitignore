@@ -8,8 +8,8 @@ poetry.lock
 # data
 /data
 /datasets
+/tables
 
 # creds
 .env
 /creds
-/tables

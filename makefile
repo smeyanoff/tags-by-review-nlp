@@ -18,6 +18,10 @@ make_dirs:
 	mkdir -p $(creds_path)
 
 push: install_deps make_dirs
+	poetry run dvc add data
+	poetry run dvc add creds
+	poetry run dvc add tables  
+	poetry run dvc add models/weights
 	poetry run dvc push
 
 pull: install_deps make_dirs
