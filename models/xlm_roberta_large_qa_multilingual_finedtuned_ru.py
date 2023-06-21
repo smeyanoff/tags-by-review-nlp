@@ -5,6 +5,9 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 import torch 
 from nltk.corpus import stopwords
 import spacy
+import numpy as np
+
+from models.models_config import ModelsConfig as mc
 
 
 load_dotenv("creds/.env")
@@ -23,8 +26,9 @@ class Pipeline:
             cache_dir=os.environ.get("MODEL_WEIGHTS_PATH")
         )
         self.WHITESPACE_HANDLER = lambda k: re.sub('\s+', ' ', re.sub('\n+', ' ', k.strip()))
-        self._norm_words = ["на",]
         self._nlp_model = spacy.load('ru_core_news_md')
+        self._stop_pos = mc.roberta_stop_pos
+        self._norm_words = mc.roberta_norm_words
 
     def tokinize(self, 
                  article_text: str,
@@ -56,29 +60,43 @@ class Pipeline:
     def answer(self,
                article_text: str,
                question: str,
-               ) -> str:
-        tokinize_dict = self.tokinize(article_text: str,
-                                      question: str)
+               proba: float = 0.05
+               ) -> str | list:
+        """
+        article_text: str - review body
+        question: str - question to answer
+        proba: float - min probability of token position
+
+        return: str | empty list - answer
+        """
+        tokinize_dict = self.tokinize(article_text,
+                                      question)
         inputs = tokinize_dict["inputs"]
         input_ids = tokinize_dict["ids"]
         model_evaluate = self.model.forward(**inputs)
-        answer_start_scores, answer_end_scores = (self.model.start_logits, 
-                                                  self.model.end_logits)
-        answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
-        answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
+        answer_start_scores, answer_end_scores = (model_evaluate.start_logits, 
+                                                  model_evaluate.end_logits)
+        # TODO() добавить вероятности
+        if (
+            (torch.softmax(answer_end_scores, dim=1)>=proba).sum()>0 and 
+            (torch.softmax(answer_start_scores, dim=1)>=proba).sum()>0
+        ):
+            answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
+            answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
 
-        answer = self.tokenizer.convert_tokens_to_string(
-            self.tokenizer.convert_ids_to_tokens(
-                input_ids[answer_start:answer_end]
+            answer = self.tokenizer.convert_tokens_to_string(
+                self.tokenizer.convert_ids_to_tokens(
+                    input_ids[answer_start:answer_end]
+                )
             )
-        )
-
-        return answer
+            return answer.lower()
+        else:
+            return []
 
     def _clear_stopwords(self, answer: str) -> list:
 
         stops = stopwords.words("russian")
-        stops = [word for word in stops if word not in self.norm_words]
+        stops = [word for word in stops if word not in self._norm_words]
 
         corpus = answer.split(" ")
         text_list = " ".join(
@@ -87,8 +105,53 @@ class Pipeline:
 
         return text_list
     
-    def _get_part_of_words(self, answer: str):
+    def _get_part_of_words(self, answer: str) -> dict:
 
         document = self._nlp_model(answer)
+        doc_dict = {}
+        for token in document:
+            if token.pos_ not in self._stop_pos:
+                doc_dict[token.text] = {
+                    "lemma": token.lemma_,
+                    "pos": token.pos_,
+                    "dep": token.dep_
+                }
+        
+        return doc_dict
+    
+    def get_tags(self,
+                 article_text: str,
+                 question: str,
+                 proba: float) -> list[str]:
 
+        """
+        article_text: str - review body
+        question: str - question to answer
+        proba: float - min probability of token position
 
+        return: list[str] - list of tags
+        """
+        answer = self.answer(article_text, question, proba)
+        if not answer:
+            return []
+        answer_cleared = self._clear_stopwords(answer)
+
+        parts = []
+        for token in answer_cleared:
+            parts.append(self._get_part_of_words(token))
+            logic = [
+                [part[key]["dep"] == "ROOT" for key in part.keys()] for part in parts
+            ]
+        try:
+            logic = np.reshape(logic, -1)
+        except ValueError:
+            return []
+        if all(condition==True for condition in logic):
+            tags = [[
+                    part[key]['lemma'] for key in part.keys()
+                ] for part in parts]
+        else:
+            tags = [[key for key in part.keys()] for part in parts]
+            if np.sum(logic) == 1:
+                tags = [" ".join(tags[0])]
+        return np.reshape(tags, -1)
