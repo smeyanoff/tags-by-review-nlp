@@ -73,14 +73,19 @@ class Pipeline:
                                       question)
         inputs = tokinize_dict["inputs"]
         input_ids = tokinize_dict["ids"]
-        model_evaluate = self.model.forward(**inputs)
-        answer_start_scores, answer_end_scores = (model_evaluate.start_logits, 
-                                                  model_evaluate.end_logits)
-        # TODO() добавить вероятности
-        if (
-            (torch.softmax(answer_end_scores, dim=1)>=proba).sum()>0 and 
-            (torch.softmax(answer_start_scores, dim=1)>=proba).sum()>0
-        ):
+        try:
+            model_evaluate = self.model.forward(**inputs)
+        except:
+            return [], ()
+        answer_start_scores, answer_end_scores = (
+            torch.softmax(model_evaluate.start_logits, dim=1), 
+            torch.softmax(model_evaluate.end_logits, dim=1)
+        )
+        max_start_score = torch.max(answer_start_scores)
+        max_end_score = torch.max(answer_end_scores)
+
+        if max_start_score >= proba and max_end_score >= proba:
+        
             answer_start = torch.argmax(answer_start_scores)  # Get the most likely beginning of answer with the argmax of the score
             answer_end = torch.argmax(answer_end_scores) + 1  # Get the most likely end of answer with the argmax of the score
 
@@ -89,9 +94,12 @@ class Pipeline:
                     input_ids[answer_start:answer_end]
                 )
             )
-            return answer.lower()
+            return (
+                answer.lower(), 
+                (round(max_start_score.item(),3), round(max_end_score.item(),3))
+            )
         else:
-            return []
+            return [], ()
 
     def _clear_stopwords(self, answer: str) -> list:
 
@@ -131,7 +139,7 @@ class Pipeline:
 
         return: list[str] - list of tags
         """
-        answer = self.answer(article_text, question, proba)
+        answer, probas = self.answer(article_text, question, proba)
         if not answer:
             return []
         answer_cleared = self._clear_stopwords(answer)
@@ -154,4 +162,4 @@ class Pipeline:
             tags = [[key for key in part.keys()] for part in parts]
             if np.sum(logic) == 1:
                 tags = [" ".join(tags[0])]
-        return np.reshape(tags, -1)
+        return [np.reshape(tags, -1), probas]

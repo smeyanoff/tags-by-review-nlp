@@ -2,6 +2,7 @@ initial_data_path := "./data/initial_data"
 intermediate_data_path := "./data/intermediate_data"
 prepared_data_path := "./data/prepared_data"
 creds_path := "./creds"
+tables_path := "./tables"
 
 start: install_spacy_model pull 
 
@@ -19,6 +20,7 @@ make_dirs:
 	mkdir -p $(intermediate_data_path)
 	mkdir -p $(prepared_data_path)
 	mkdir -p $(creds_path)
+	mkdir -p $(tables_path)
 
 dvc_push: install_deps make_dirs
 	poetry run dvc add data
