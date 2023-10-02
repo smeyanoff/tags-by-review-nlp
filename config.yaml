@@ -1,0 +1,12 @@
+pathes:
+    data:
+        initial_data: "data/initial_data"
+        intermediate_data: "data/intermediate_data"
+        prepared_data: "data/prepared_data"
+    model_weights: "models/roberta"
+models:
+    roberta:
+        stop_pos:
+        -   на
+        norm_words:
+        -   под

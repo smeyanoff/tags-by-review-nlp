@@ -1,26 +1,36 @@
-import os
 from abc import ABC, abstractmethod
+from os import environ
 from pathlib import Path, PurePath
 
 import sqlalchemy as sql
 from dotenv import load_dotenv
-from pandas import DataFrame, read_sql_query
+from pandas import read_sql_query
+from pyyaml import safeload
 
 load_dotenv()
+with open("config.yaml", "r", encoding="utf-8") as file:
+    config = safeload(file)["pathes"]
 
 
 class DataUtils(ABC):
+    """
+    class for downloading the data
+    """
     @abstractmethod
-    def download_data(download_script_path: Path, file_name: str) -> None:
+    def download_data(
+        self,
+        download_script_path: Path,
+        file_name: str,
+    ) -> None:
         """
         download_scropt: Path - путь к sql-файлу для загрузки
         """
         url = "postgresql://{}:{}@{}:{}/{}".format(
-            os.environ.get("DATABASE_LOGIN"),
-            os.environ.get("DATABASE_PASSWORD"),
-            os.environ.get("DATABASE_HOST"),
+            environ.get("DATABASE_LOGIN"),
+            environ.get("DATABASE_PASSWORD"),
+            environ.get("DATABASE_HOST"),
             5432,
-            os.environ.get("DATABASE_NAME"),
+            environ.get("DATABASE_NAME"),
         )
         engine = sql.create_engine(url=url)
 
@@ -28,6 +38,8 @@ class DataUtils(ABC):
             data = read_sql_query(query.read(), engine)
 
         data.to_parquet(
-            PurePath(os.environ.get("INITIAL_DATA_PATH"),
-                     f"{file_name}.parquet")
+            PurePath(
+                config["data"]["initial_data"],
+                f"{file_name}.parquet",
+            ),
         )
