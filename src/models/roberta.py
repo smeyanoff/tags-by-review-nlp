@@ -1,3 +1,7 @@
+"""
+В этом модуле реализован пайплайн модели
+"""
+
 import re
 
 import numpy as np
@@ -10,7 +14,7 @@ from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 
 load_dotenv()
 with open("config.yaml", "r", encoding="utf-8") as file:
-    config = safeload(file)
+    config = safeload(file)["models"]["roberta"]
 
 
 class Pipeline:
@@ -24,18 +28,18 @@ class Pipeline:
         )
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name,
-            cache_dir=config["data"]["model_weights"],
+            cache_dir=config["model_weights"],
         )
         self.model = AutoModelForQuestionAnswering.from_pretrained(
             self.model_name,
-            cache_dir=config["data"]["model_weights"],
+            cache_dir=config["model_weights"],
         )
         self.whitespace_handler = lambda k: re.sub(
             r"\s+", " ", re.sub("\n+", " ", k.strip()),
         )
         self._nlp_model = spacy.load("ru_core_news_md")
-        self._stop_pos = config["models"]["roberta"]["stop_pos"]
-        self._norm_words = config["models"]["roberta"]["norm_words"]
+        self._stop_pos = config["stop_pos"]
+        self._norm_words = config["norm_words"]
 
     def tokinize(self, article_text: str, question: str) -> dict:
         """

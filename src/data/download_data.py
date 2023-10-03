@@ -1,3 +1,5 @@
+"В этом модуле реализованы утилиты для работы с данными"
+
 from abc import ABC, abstractmethod
 from os import environ
 from pathlib import Path, PurePath
