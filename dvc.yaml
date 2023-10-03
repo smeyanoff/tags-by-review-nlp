@@ -1,0 +1,17 @@
+stages:
+    download_data:
+        cmd: >-
+          python src/data/download_data.py
+          --script_path="scripts/select_comments.sql"
+          --file_name="comments" &&
+          python src/data/download_data.py
+          --script_path="scripts/select_tags.sql"
+          --file_name="tags"
+        deps:
+          - src/data/download_data.py
+          - config.yaml
+          - scripts/select_comments.sql
+          - scripts/select_tags.sql
+        outs:
+          - data/initial_data/comments.parquet
+          - data/initial_data/tags.parquet

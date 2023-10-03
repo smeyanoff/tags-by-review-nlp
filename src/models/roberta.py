@@ -9,12 +9,12 @@ import spacy
 import torch
 from dotenv import load_dotenv
 from nltk.corpus import stopwords
-from pyyaml import safeload
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
+from yaml import safe_load
 
 load_dotenv()
 with open("config.yaml", "r", encoding="utf-8") as file:
-    config = safeload(file)["models"]["roberta"]
+    config = safe_load(file)["models"]["roberta"]
 
 
 class Pipeline:

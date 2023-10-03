@@ -1,11 +1,24 @@
 # tags-by-review-nlp
 
-### russian
-## APP
-Вы можете познакомиться с рабочей версией приложения и модели на Hugging Face [Space](https://huggingface.co/spaces/smeyanof/tags-from-reviews)
-
 ## description
 Цель данного проекта, получить пайплайн, способный доставать краткие теги из отзывов с сервиса Trapadvisor. В проекте используется [тюненая модель roberta](https://huggingface.co/AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru?doi=true), а также методы NLP.
+
+## start
+Сначала необходимо установить зависимости и настроить окружение
+```
+make start
+```
+
+Опционально (только для Levart):
+Для использования dvc с minio необходимо настроить локальные креды:
+```
+dvc remote modify --local minio access_key_id "accessKey"
+dvc remote modify --local minio secret_access_key "secretKey"
+```
+После можно загрузить данные:
+```
+dvc pull
+```
 
 ## Пример использования
 В модель передается корпус текста и вопрос, результатом работы является ответ на вопрос из текста. После softmax, получаю некоторые "вероятности". Регулируя cutoff, можно выкидывать теги, в которых модель не уверена, тогда возвращается пустой list.

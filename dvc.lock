@@ -1,0 +1,39 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python src/data/download_data.py  --script_path="scripts/select_comments.sql"  --file_name="comments"
+      &&  python src/data/download_data.py  --script_path="scripts/select_tags.sql"  --file_name="tags"
+    deps:
+    - path: config.yaml
+      hash: md5
+      md5: c4547c368b1352894df00e9d8b7eb235
+      size: 291
+    - path: scripts/select_comments.sql
+      hash: md5
+      md5: 9bc5cd67ab4f97980995d11d5b77a51a
+      size: 27
+    - path: scripts/select_tags.sql
+      hash: md5
+      md5: f29049db26dbbbda0a24b8f81e97d751
+      size: 23
+    - path: src/data/download_data.py
+      hash: md5
+      md5: ed148450bffd656dfe8a622bcc9aab43
+      size: 1400
+    outs:
+    - path: data/initial_data/comments.parquet
+      hash: md5
+      md5: 055eeb8001098c7b99ceb64a30974997
+      size: 1277506
+      cloud:
+        minio:
+          etag: 055eeb8001098c7b99ceb64a30974997
+          version_id: d41f7d82-4b39-4d05-a1bf-54e389935a7e
+    - path: data/initial_data/tags.parquet
+      hash: md5
+      md5: 3a40fad4c7fae36b802f4e8b1fb3bf30
+      size: 6684
+      cloud:
+        minio:
+          etag: 3a40fad4c7fae36b802f4e8b1fb3bf30
+          version_id: e728acbc-7f51-4fe2-a291-d9a27bca1309
