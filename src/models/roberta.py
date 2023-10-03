@@ -18,6 +18,7 @@ with open("config.yaml", "r", encoding="utf-8") as file:
 
 
 class Pipeline:
+
     """
     Пайплайн модели roberta
     """

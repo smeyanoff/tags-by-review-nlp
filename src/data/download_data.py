@@ -15,6 +15,7 @@ with open("config.yaml", "r", encoding="utf-8") as file:
 
 
 class DataUtils(ABC):
+
     """
     class for downloading the data
     """

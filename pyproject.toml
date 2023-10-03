@@ -9,6 +9,7 @@ packages = []
 
 [tool.poetry.dependencies]
 python = "~3.10"
+dvc = {extras = ["s3"], version = "^3.23.0"}
 
 
 [tool.poetry.group.data.dependencies]
@@ -28,7 +29,6 @@ pre-commit = "3.4.0"
 pyyaml = "^6.0.1"
 poetry-dotenv-plugin = "^0.2.0"
 dvc = "^3.23.0"
-dvc-gdrive = "^2.20.0"
 
 
 
