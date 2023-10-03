@@ -2,5 +2,7 @@
     remote = minio
     autostage = true
 ['remote "minio"']
-    url = s3://tags-by-review
-    endpointurl = http://79.137.206.67:9001/
+    url = s3://tags-by-review/DVC
+    endpointurl = http://79.137.206.67:9000/
+    version_aware = true
+    use_ssl = False
