@@ -15,3 +15,11 @@ stages:
         outs:
           - data/initial_data/comments.parquet
           - data/initial_data/tags.parquet
+    prepare_data:
+        cmd: >-
+          python src/data/prepare_data.py
+        deps:
+          - src/data/prepare_data.py
+          - config.yaml
+        outs:
+          - data/intermediate_data/comments_tags.parquet
