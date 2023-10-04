@@ -36,7 +36,7 @@ def get_tagged_df(df_path: str, save_path: str) -> None:
     """
     helps get tags from df
     """
-    df = pd.read_parquet(df_path).loc[:10]
+    df = pd.read_parquet(df_path)
     model = roberta.Pipeline()
 
     questions = config["questions"]

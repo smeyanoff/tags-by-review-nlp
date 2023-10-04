@@ -72,7 +72,9 @@ class Pipeline:
         input_ids = tokinize_dict["ids"]
         try:
             model_evaluate = self.model.forward(**inputs)
-        except ValueError:
+        except RuntimeError:
+            return [], ()
+        except IndexError:
             return [], ()
         answer_start_scores, answer_end_scores = (
             torch.softmax(model_evaluate.start_logits, dim=1),

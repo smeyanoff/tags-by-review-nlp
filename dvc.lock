@@ -69,21 +69,21 @@ stages:
       size: 581
     - path: src/data/get_tags.py
       hash: md5
-      md5: c988eb9a0f74c396328660f789972a5f
-      size: 1510
+      md5: f3ec4a236f55941ebc24abbb7a735af6
+      size: 1501
     - path: src/models/roberta.py
       hash: md5
-      md5: a5d438e233c463923e4c8df371eb16b4
-      size: 5067
+      md5: 8ffca925d6a2effb8a0f9e3ce5513513
+      size: 5122
     outs:
     - path: data/intermediate_data/df_tagged.parquet
       hash: md5
-      md5: 0e0b3a20198c3cb0738a584a9d14e20c
-      size: 44088
+      md5: d8fab247e8b48bce649be99e58d65aa3
+      size: 2217109
       cloud:
         minio:
-          etag: 0e0b3a20198c3cb0738a584a9d14e20c
-          version_id: 4d60dd8b-fed6-46be-9fe2-0a8f30fa70e5
+          etag: d8fab247e8b48bce649be99e58d65aa3
+          version_id: 4bab4769-f43c-4c11-b03e-687b5c218e59
     - path: models/roberta/models--AlexKay--xlm-roberta-large-qa-multilingual-finedtuned-ru
       hash: md5
       files:
@@ -93,112 +93,112 @@ stages:
         cloud:
           minio:
             etag: d41d8cd98f00b204e9800998ecf8427e
-            version_id: 8f54cca1-bb34-44bb-9842-5c1f38f8fc30
+            version_id: 8599be46-dbb7-4af5-afc8-2456dc0de967
       - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/model.safetensors
         md5: d41d8cd98f00b204e9800998ecf8427e
         size: 0
         cloud:
           minio:
             etag: d41d8cd98f00b204e9800998ecf8427e
-            version_id: 2a6dfb49-8853-4d19-a7e9-a24dce8f4fd4
+            version_id: 9d1bec5c-a491-4d1c-b7a1-2571696814a9
       - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/model.safetensors.index.json
         md5: d41d8cd98f00b204e9800998ecf8427e
         size: 0
         cloud:
           minio:
             etag: d41d8cd98f00b204e9800998ecf8427e
-            version_id: 383f52c2-da6d-4164-bfa8-37f5ef9c5063
+            version_id: 81e1590e-6c02-4f0b-afe2-ae8024e9b57c
       - relpath: blobs/154f43c670c33e76b909e3c6c7a9d3d89402579fb6cd1a0414a98d3e165346cd
         md5: 85428479f4a9f2b2896783468970ce57
         size: 2235540992
         cloud:
           minio:
             etag: 7f2c15783170adf2582a65f18a5cd4d2-43
-            version_id: cfe05902-acc7-4bb8-8583-a4b4ee063537
+            version_id: fd960d44-4a2d-44df-99ca-ed680b7dfb33
       - relpath: blobs/3dbb2cf43b7d63b00d2fd65e77d1522abf82562b
         md5: 3fd33a2bd999bf8fbfea9fd64e6d6770
         size: 781
         cloud:
           minio:
             etag: 3fd33a2bd999bf8fbfea9fd64e6d6770
-            version_id: 6b08d85b-9b4a-4aba-8376-9af3bc701c7e
+            version_id: 520710f0-ceb1-4713-a290-e0555013e217
       - relpath: blobs/6cd1d9021e10d47aed59399af6b0e30312b46ca4
         md5: 72e6c8ab541f1ff24b139c96216fe8c9
         size: 150
         cloud:
           minio:
             etag: 72e6c8ab541f1ff24b139c96216fe8c9
-            version_id: b615f738-1e21-473b-a6a8-a38ba677a76e
+            version_id: 70e00c57-8a09-4018-8726-6dcef48af45b
       - relpath: blobs/be40185617dee2e5940b7ad8c9aec5fc8babcf2a
         md5: 6151a01f28dc31a96d6933ff0648c85c
         size: 9096735
         cloud:
           minio:
             etag: 6151a01f28dc31a96d6933ff0648c85c
-            version_id: 5ffe9dec-29e1-4173-a57d-13cc2fc4bada
+            version_id: 366d485a-ede8-45dd-b59a-63a5b18f8291
       - relpath: blobs/cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
         md5: bf25eb5120ad92ef5c7d8596b5dc4046
         size: 5069051
         cloud:
           minio:
             etag: bf25eb5120ad92ef5c7d8596b5dc4046
-            version_id: 09d4492a-1e08-40f7-90fe-f358895358a2
+            version_id: 176d63ef-52ce-429b-8a9b-2ddccdf9cbc5
       - relpath: blobs/ee317c016226c12022b10f06e5f95f53c284407e
         md5: cdbd02dc6d8c7a736ddb383d85d85877
         size: 516
         cloud:
           minio:
             etag: cdbd02dc6d8c7a736ddb383d85d85877
-            version_id: 67b18aee-a69b-4c5c-96ad-b7307f2c941d
+            version_id: 7cc018c3-f3fb-423e-ad39-8c13d473b7bd
       - relpath: refs/main
         md5: 5b82c7d5b69fd14015bda8a3573af1ec
         size: 40
         cloud:
           minio:
             etag: 5b82c7d5b69fd14015bda8a3573af1ec
-            version_id: 42f4e219-8f52-4b19-b30d-512106f4f3e7
+            version_id: 2025d97b-81f1-4157-ab51-bb3f4e79c4a4
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/config.json
         md5: 3fd33a2bd999bf8fbfea9fd64e6d6770
         size: 781
         cloud:
           minio:
             etag: 3fd33a2bd999bf8fbfea9fd64e6d6770
-            version_id: 15420fd5-b31e-4e5c-a49e-e500b02bc275
+            version_id: d5eaad47-bbc9-4f9b-b230-160f85f97a50
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/pytorch_model.bin
         md5: 85428479f4a9f2b2896783468970ce57
         size: 2235540992
         cloud:
           minio:
             etag: 7f2c15783170adf2582a65f18a5cd4d2-43
-            version_id: 7bf747a2-acfb-46be-8392-7f26b1515635
+            version_id: 9fd34fd4-6613-4614-96da-c6d21ab2acc0
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/sentencepiece.bpe.model
         md5: bf25eb5120ad92ef5c7d8596b5dc4046
         size: 5069051
         cloud:
           minio:
             etag: bf25eb5120ad92ef5c7d8596b5dc4046
-            version_id: b2a4b331-db57-4bff-ab72-02968e26b1df
+            version_id: 19927e49-52f9-4ba2-97b1-3d8b195e425d
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/special_tokens_map.json
         md5: 72e6c8ab541f1ff24b139c96216fe8c9
         size: 150
         cloud:
           minio:
             etag: 72e6c8ab541f1ff24b139c96216fe8c9
-            version_id: d5de5c3b-3514-464e-b962-6be2eabb848d
+            version_id: 5305f237-e06c-4f24-ba53-39a905c3a74d
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/tokenizer.json
         md5: 6151a01f28dc31a96d6933ff0648c85c
         size: 9096735
         cloud:
           minio:
             etag: 6151a01f28dc31a96d6933ff0648c85c
-            version_id: 96006a69-4147-4386-b7b6-b86e0845c036
+            version_id: 4f676a94-d4cb-41df-934b-126d17335810
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/tokenizer_config.json
         md5: cdbd02dc6d8c7a736ddb383d85d85877
         size: 516
         cloud:
           minio:
             etag: cdbd02dc6d8c7a736ddb383d85d85877
-            version_id: 62674e75-a8be-481d-86ba-3fdfcf480c51
+            version_id: d7252875-2c7e-4942-a9de-b90729d064b2
   get_final_df:
     cmd: python src/data/get_final_df.py --df_tagged_path="data/intermediate_data/df_tagged.parquet"
       --save_path="data/prepared_data/prepared_df.parquet"
@@ -209,14 +209,14 @@ stages:
       size: 581
     - path: src/data/get_final_df.py
       hash: md5
-      md5: 10ace66a77c960366ef8b1ea90618844
-      size: 1187
+      md5: 4f6631d75ab74fb9ea15497174c7fef4
+      size: 1175
     outs:
     - path: data/prepared_data/prepared_df.parquet
       hash: md5
-      md5: 5ce509c51893e88643f7801bd7c03f99
-      size: 16789
+      md5: f94222ca7a363064fc4abba12ab7f181
+      size: 2811834
       cloud:
         minio:
-          etag: 5ce509c51893e88643f7801bd7c03f99
-          version_id: 69a3427e-37f5-45b4-9623-aef393e007d1
+          etag: f94222ca7a363064fc4abba12ab7f181
+          version_id: 3861d693-454d-45c3-839f-7c422c9e885c
