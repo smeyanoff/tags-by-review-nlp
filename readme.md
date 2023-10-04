@@ -4,6 +4,13 @@
 Цель данного проекта, получить пайплайн, способный доставать краткие теги из отзывов с сервиса Trapadvisor. В проекте используется [тюненая модель roberta](https://huggingface.co/AlexKay/xlm-roberta-large-qa-multilingual-finedtuned-ru?doi=true), а также методы NLP.
 
 ## start
+
+Работоспособность тестировалась на linux ubuntu22.04 WSL
+Архитектура процессора x86_64
+GPU 4GB
+
+Может потребоваться сменить url загрузки torch в файле `pyproject.toml` на совместимую с вашей системой. Ознакомится можно по [ссылке](https://pytorch.org/get-started/locally/).
+
 Сначала необходимо установить зависимости и настроить окружение
 ```
 make start
@@ -18,6 +25,12 @@ dvc remote modify --local minio secret_access_key "secretKey"
 После можно загрузить данные:
 ```
 dvc pull
+```
+
+## Повторение эксперимента
+Для того, чтобы воспроизвести эксперимент воспользуйтесь командой
+```
+make reproduce_experiment
 ```
 
 ## Пример использования

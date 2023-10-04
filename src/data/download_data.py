@@ -1,33 +1,29 @@
 "В этом модуле реализованы утилиты для работы с данными"
 
 from os import environ
-from pathlib import Path, PurePath
 
 import click
 import sqlalchemy as sql
 from dotenv import load_dotenv
 from pandas import read_sql_query
-from yaml import safe_load
 
 load_dotenv()
-with open("config.yaml", "r", encoding="utf-8") as file:
-    config = safe_load(file)["pathes"]
 
 
 @click.command()
 @click.option(
     '--script_path',
     required=True,
-    help="path/to/download_script.file",
+    help="path/to/download_script.sql",
 )
 @click.option(
-    '--file_name',
+    '--save_path',
     required=True,
-    help="entire file name",
+    help="path/to/save_df.parquet",
 )
 def download_data(
-    script_path: Path,
-    file_name: str,
+    script_path: str,
+    save_path: str,
 ) -> None:
     """
     download_scropt: Path - путь к sql-файлу для загрузки
@@ -44,12 +40,7 @@ def download_data(
     with open(script_path, "r", encoding="utf-8") as query:
         data = read_sql_query(query.read(), engine)
 
-    data.to_parquet(
-        PurePath(
-            config["data"]["initial_data"],
-            f"{file_name}.parquet",
-        ),
-    )
+    data.to_parquet(save_path)
 
 
 if __name__ == "__main__":

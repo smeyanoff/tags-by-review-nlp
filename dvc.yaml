@@ -1,25 +1,41 @@
 stages:
     download_data:
         cmd: >-
-          python src/data/download_data.py
-          --script_path="scripts/select_comments.sql"
-          --file_name="comments" &&
-          python src/data/download_data.py
-          --script_path="scripts/select_tags.sql"
-          --file_name="tags"
+            python src/data/download_data.py
+            --script_path="scripts/select_comments.sql"
+            --save_path="data/initial_data/comments.parquet"
+            &&
+            python src/data/download_data.py
+            --script_path="scripts/select_tags.sql"
+            --save_path="data/initial_data/tags.parquet"
         deps:
-          - src/data/download_data.py
-          - config.yaml
-          - scripts/select_comments.sql
-          - scripts/select_tags.sql
+            - src/data/download_data.py
+            - config.yaml
+            - scripts/select_comments.sql
+            - scripts/select_tags.sql
         outs:
-          - data/initial_data/comments.parquet
-          - data/initial_data/tags.parquet
+            - data/initial_data/comments.parquet
+            - data/initial_data/tags.parquet
     prepare_data:
         cmd: >-
-          python src/data/prepare_data.py
+            python src/data/prepare_data.py
+            --comments_path="data/initial_data/comments.parquet"
+            --tags_path="data/initial_data/tags.parquet"
+            --save_path="data/intermediate_data/comments_tags.parquet"
         deps:
-          - src/data/prepare_data.py
-          - config.yaml
+            - src/data/prepare_data.py
+            - config.yaml
         outs:
-          - data/intermediate_data/comments_tags.parquet
+            - data/intermediate_data/comments_tags.parquet
+    get_tags:
+        cmd: >-
+            python src/data/get_tags.py
+            --df_path="data/intermediate_data/comments_tags.parquet"
+            --save_path="data/intermediate_data/df_tagged.parquet"
+        deps:
+            - src/data/get_tags.py
+            - src/models/roberta.py
+            - config.yaml
+        outs:
+            - data/intermediate_data/df_tagged.parquet
+            - models/roberta/models--AlexKay--xlm-roberta-large-qa-multilingual-finedtuned-ru

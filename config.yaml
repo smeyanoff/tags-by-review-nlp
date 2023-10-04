@@ -1,12 +1,20 @@
-pathes:
-    data:
-        initial_data: "data/initial_data"
-        intermediate_data: "data/intermediate_data"
-        prepared_data: "data/prepared_data"
-models:
-    roberta:
-        model_weights: "models/roberta"
-        stop_pos:
-        -   на
-        norm_words:
-        -   под
+roberta:
+    model_weights: "models/roberta"
+    # модель будет оставлять ответы только выше этой вероятности
+    cut_off_proba: 0.
+    # вопросы, на которые модель будет искать ответ
+    questions:
+    -   Чем заняться?
+    -   Какой?
+    -   Когда?
+    -   Какие ощущения?
+    -   Почему?
+    -   Для кого?
+    -   С кем?
+    -   Что?
+    -   Кому?
+    -   Для чего?
+    stop_pos:
+    -   на
+    norm_words:
+    -   под

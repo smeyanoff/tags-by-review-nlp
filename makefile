@@ -17,3 +17,6 @@ install_spacy_model:
 install_pre_commit:
 	poetry run pre-commit install
 	poetry run pre-commit autoupdate
+##
+reproduce_experiment:
+	poetry run dvc exp run

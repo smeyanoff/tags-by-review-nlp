@@ -13,8 +13,8 @@ from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 from yaml import safe_load
 
 load_dotenv()
-with open("config.yaml", "r", encoding="utf-8") as file:
-    config = safe_load(file)["models"]["roberta"]
+with open("config.yaml", "r") as file:
+    config = safe_load(file)["roberta"]
 
 
 class Pipeline:
@@ -55,16 +55,6 @@ class Pipeline:
         input_ids = inputs["input_ids"].tolist()[0]
 
         return {"inputs": inputs, "ids": input_ids}
-
-    def add_norm_words(self, word_list: list) -> None:
-        """
-        Добавляет слова в norm_words. norm_words используется, чтобы
-        убрать некоторые слова из корпуса stopwords
-        word_list: list
-        return None
-        """
-        for word in word_list:
-            self._norm_words.append(word)
 
     def answer(
         self,

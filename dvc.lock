@@ -2,13 +2,13 @@ schema: '2.0'
 stages:
   download_data:
     cmd: python src/data/download_data.py --script_path="scripts/select_comments.sql"
-      --file_name="comments" && python src/data/download_data.py --script_path="scripts/select_tags.sql"
-      --file_name="tags"
+      --save_path="data/initial_data/comments.parquet"  && python src/data/download_data.py
+      --script_path="scripts/select_tags.sql" --save_path="data/initial_data/tags.parquet"
     deps:
     - path: config.yaml
       hash: md5
-      md5: c4547c368b1352894df00e9d8b7eb235
-      size: 291
+      md5: d174d7d405165060528a8242868395af
+      size: 582
     - path: scripts/select_comments.sql
       hash: md5
       md5: 9bc5cd67ab4f97980995d11d5b77a51a
@@ -19,8 +19,8 @@ stages:
       size: 23
     - path: src/data/download_data.py
       hash: md5
-      md5: d0c6bc8bdac8051e409921878ded2088
-      size: 1396
+      md5: d076b8ad518540679055bfbfbdba0c9d
+      size: 1201
     outs:
     - path: data/initial_data/comments.parquet
       hash: md5
@@ -39,16 +39,17 @@ stages:
           etag: 3a40fad4c7fae36b802f4e8b1fb3bf30
           version_id: e728acbc-7f51-4fe2-a291-d9a27bca1309
   prepare_data:
-    cmd: python src/data/prepare_data.py
+    cmd: python src/data/prepare_data.py --comments_path="data/initial_data/comments.parquet"
+      --tags_path="data/initial_data/tags.parquet" --save_path="data/intermediate_data/comments_tags.parquet"
     deps:
     - path: config.yaml
       hash: md5
-      md5: c4547c368b1352894df00e9d8b7eb235
-      size: 291
+      md5: d174d7d405165060528a8242868395af
+      size: 582
     - path: src/data/prepare_data.py
       hash: md5
-      md5: 68d4256f4fb3a0c6a0c7950a4702a0e6
-      size: 654
+      md5: 1778cbf33eee4d05604bf8336c8ab804
+      size: 918
     outs:
     - path: data/intermediate_data/comments_tags.parquet
       hash: md5
@@ -58,3 +59,143 @@ stages:
         minio:
           etag: 28f51ea82daeb34255a0ff28ef1d0814
           version_id: 8048f0da-2e9e-45b1-b2d3-94b32f787363
+  get_tags:
+    cmd: 'python src/data/get_tags.py  --df_path="data/intermediate_data/comments_tags.parquet"
+      --save_path="data/intermediate_data/df_tagged.parquet" '
+    deps:
+    - path: config.yaml
+      hash: md5
+      md5: d174d7d405165060528a8242868395af
+      size: 582
+    - path: src/data/get_tags.py
+      hash: md5
+      md5: bb7a98509ded3847b2a655fc04bb6580
+      size: 1516
+    - path: src/models/roberta.py
+      hash: md5
+      md5: b5a310ea7a690c9481d694dc54e991d9
+      size: 5112
+    outs:
+    - path: data/intermediate_data/df_tagged.parquet
+      hash: md5
+      md5: 0e0b3a20198c3cb0738a584a9d14e20c
+      size: 44088
+      cloud:
+        minio:
+          etag: 0e0b3a20198c3cb0738a584a9d14e20c
+          version_id: 4d60dd8b-fed6-46be-9fe2-0a8f30fa70e5
+    - path: models/roberta/models--AlexKay--xlm-roberta-large-qa-multilingual-finedtuned-ru
+      hash: md5
+      files:
+      - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/added_tokens.json
+        md5: d41d8cd98f00b204e9800998ecf8427e
+        size: 0
+        cloud:
+          minio:
+            etag: d41d8cd98f00b204e9800998ecf8427e
+            version_id: 736fcfaf-2b3a-451c-ad94-f3d115b14854
+      - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/model.safetensors
+        md5: d41d8cd98f00b204e9800998ecf8427e
+        size: 0
+        cloud:
+          minio:
+            etag: d41d8cd98f00b204e9800998ecf8427e
+            version_id: 6423e861-bade-45a8-afdf-56bdacad8cb0
+      - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/model.safetensors.index.json
+        md5: d41d8cd98f00b204e9800998ecf8427e
+        size: 0
+        cloud:
+          minio:
+            etag: d41d8cd98f00b204e9800998ecf8427e
+            version_id: ffaf0695-b46b-4dff-b471-1f3410085963
+      - relpath: blobs/154f43c670c33e76b909e3c6c7a9d3d89402579fb6cd1a0414a98d3e165346cd
+        md5: 85428479f4a9f2b2896783468970ce57
+        size: 2235540992
+        cloud:
+          minio:
+            etag: 7f2c15783170adf2582a65f18a5cd4d2-43
+            version_id: e7842630-7a4e-45e6-9448-044db881f70b
+      - relpath: blobs/3dbb2cf43b7d63b00d2fd65e77d1522abf82562b
+        md5: 3fd33a2bd999bf8fbfea9fd64e6d6770
+        size: 781
+        cloud:
+          minio:
+            etag: 3fd33a2bd999bf8fbfea9fd64e6d6770
+            version_id: 425b8cad-b70b-4801-8e7b-727e7dec5041
+      - relpath: blobs/6cd1d9021e10d47aed59399af6b0e30312b46ca4
+        md5: 72e6c8ab541f1ff24b139c96216fe8c9
+        size: 150
+        cloud:
+          minio:
+            etag: 72e6c8ab541f1ff24b139c96216fe8c9
+            version_id: 2b22b783-afe6-47e0-a50e-6e2985231f2f
+      - relpath: blobs/be40185617dee2e5940b7ad8c9aec5fc8babcf2a
+        md5: 6151a01f28dc31a96d6933ff0648c85c
+        size: 9096735
+        cloud:
+          minio:
+            etag: 6151a01f28dc31a96d6933ff0648c85c
+            version_id: 0c68cc08-1b58-405b-885a-f375afcd4e2a
+      - relpath: blobs/cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
+        md5: bf25eb5120ad92ef5c7d8596b5dc4046
+        size: 5069051
+        cloud:
+          minio:
+            etag: bf25eb5120ad92ef5c7d8596b5dc4046
+            version_id: 2cde6aec-4685-47af-b038-3d8e13ec82ed
+      - relpath: blobs/ee317c016226c12022b10f06e5f95f53c284407e
+        md5: cdbd02dc6d8c7a736ddb383d85d85877
+        size: 516
+        cloud:
+          minio:
+            etag: cdbd02dc6d8c7a736ddb383d85d85877
+            version_id: e2389df6-837c-46ec-9684-a3b026fa49b0
+      - relpath: refs/main
+        md5: 5b82c7d5b69fd14015bda8a3573af1ec
+        size: 40
+        cloud:
+          minio:
+            etag: 5b82c7d5b69fd14015bda8a3573af1ec
+            version_id: 508024ee-76ba-45c5-a8a0-581df443e750
+      - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/config.json
+        md5: 3fd33a2bd999bf8fbfea9fd64e6d6770
+        size: 781
+        cloud:
+          minio:
+            etag: 3fd33a2bd999bf8fbfea9fd64e6d6770
+            version_id: 92dce4cc-3607-4498-8059-5bbf41e23627
+      - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/pytorch_model.bin
+        md5: 85428479f4a9f2b2896783468970ce57
+        size: 2235540992
+        cloud:
+          minio:
+            etag: 7f2c15783170adf2582a65f18a5cd4d2-43
+            version_id: 7e1c55d1-3b70-4bc1-9f54-c6f5b4b01e76
+      - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/sentencepiece.bpe.model
+        md5: bf25eb5120ad92ef5c7d8596b5dc4046
+        size: 5069051
+        cloud:
+          minio:
+            etag: bf25eb5120ad92ef5c7d8596b5dc4046
+            version_id: 1c38d153-33af-4cde-83b4-678b5554fe8d
+      - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/special_tokens_map.json
+        md5: 72e6c8ab541f1ff24b139c96216fe8c9
+        size: 150
+        cloud:
+          minio:
+            etag: 72e6c8ab541f1ff24b139c96216fe8c9
+            version_id: 84705989-cf97-47f5-9081-edf3244c258c
+      - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/tokenizer.json
+        md5: 6151a01f28dc31a96d6933ff0648c85c
+        size: 9096735
+        cloud:
+          minio:
+            etag: 6151a01f28dc31a96d6933ff0648c85c
+            version_id: d042124d-7eca-4b38-a4a8-c74dfa6742d4
+      - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/tokenizer_config.json
+        md5: cdbd02dc6d8c7a736ddb383d85d85877
+        size: 516
+        cloud:
+          minio:
+            etag: cdbd02dc6d8c7a736ddb383d85d85877
+            version_id: 6cc9f998-fcdd-4cc4-9142-64490de71a0c
