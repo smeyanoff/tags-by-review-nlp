@@ -2,13 +2,13 @@ schema: '2.0'
 stages:
   download_data:
     cmd: python src/data/download_data.py --script_path="scripts/select_comments.sql"
-      --save_path="data/initial_data/comments.parquet"  && python src/data/download_data.py
+      --save_path="data/initial_data/comments.parquet" && python src/data/download_data.py
       --script_path="scripts/select_tags.sql" --save_path="data/initial_data/tags.parquet"
     deps:
     - path: config.yaml
       hash: md5
-      md5: d174d7d405165060528a8242868395af
-      size: 582
+      md5: 426b96727f7279748f8b2a6bf8d4bfec
+      size: 581
     - path: scripts/select_comments.sql
       hash: md5
       md5: 9bc5cd67ab4f97980995d11d5b77a51a
@@ -19,8 +19,8 @@ stages:
       size: 23
     - path: src/data/download_data.py
       hash: md5
-      md5: d076b8ad518540679055bfbfbdba0c9d
-      size: 1201
+      md5: 0a6b459fb0cab0590e910b15ed19c041
+      size: 1138
     outs:
     - path: data/initial_data/comments.parquet
       hash: md5
@@ -44,12 +44,12 @@ stages:
     deps:
     - path: config.yaml
       hash: md5
-      md5: d174d7d405165060528a8242868395af
-      size: 582
+      md5: 426b96727f7279748f8b2a6bf8d4bfec
+      size: 581
     - path: src/data/prepare_data.py
       hash: md5
-      md5: 1778cbf33eee4d05604bf8336c8ab804
-      size: 918
+      md5: d5aa863b6752ba0394259ac36ed8583e
+      size: 899
     outs:
     - path: data/intermediate_data/comments_tags.parquet
       hash: md5
@@ -60,21 +60,21 @@ stages:
           etag: 28f51ea82daeb34255a0ff28ef1d0814
           version_id: 8048f0da-2e9e-45b1-b2d3-94b32f787363
   get_tags:
-    cmd: 'python src/data/get_tags.py  --df_path="data/intermediate_data/comments_tags.parquet"
-      --save_path="data/intermediate_data/df_tagged.parquet" '
+    cmd: python src/data/get_tags.py --df_path="data/intermediate_data/comments_tags.parquet"
+      --save_path="data/intermediate_data/df_tagged.parquet"
     deps:
     - path: config.yaml
       hash: md5
-      md5: d174d7d405165060528a8242868395af
-      size: 582
+      md5: 426b96727f7279748f8b2a6bf8d4bfec
+      size: 581
     - path: src/data/get_tags.py
       hash: md5
-      md5: bb7a98509ded3847b2a655fc04bb6580
-      size: 1516
+      md5: c988eb9a0f74c396328660f789972a5f
+      size: 1510
     - path: src/models/roberta.py
       hash: md5
-      md5: b5a310ea7a690c9481d694dc54e991d9
-      size: 5112
+      md5: a5d438e233c463923e4c8df371eb16b4
+      size: 5067
     outs:
     - path: data/intermediate_data/df_tagged.parquet
       hash: md5
@@ -93,109 +93,130 @@ stages:
         cloud:
           minio:
             etag: d41d8cd98f00b204e9800998ecf8427e
-            version_id: 736fcfaf-2b3a-451c-ad94-f3d115b14854
+            version_id: 8f54cca1-bb34-44bb-9842-5c1f38f8fc30
       - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/model.safetensors
         md5: d41d8cd98f00b204e9800998ecf8427e
         size: 0
         cloud:
           minio:
             etag: d41d8cd98f00b204e9800998ecf8427e
-            version_id: 6423e861-bade-45a8-afdf-56bdacad8cb0
+            version_id: 2a6dfb49-8853-4d19-a7e9-a24dce8f4fd4
       - relpath: .no_exist/6cc14366f0cc95428a695d30594a93dd6935d800/model.safetensors.index.json
         md5: d41d8cd98f00b204e9800998ecf8427e
         size: 0
         cloud:
           minio:
             etag: d41d8cd98f00b204e9800998ecf8427e
-            version_id: ffaf0695-b46b-4dff-b471-1f3410085963
+            version_id: 383f52c2-da6d-4164-bfa8-37f5ef9c5063
       - relpath: blobs/154f43c670c33e76b909e3c6c7a9d3d89402579fb6cd1a0414a98d3e165346cd
         md5: 85428479f4a9f2b2896783468970ce57
         size: 2235540992
         cloud:
           minio:
             etag: 7f2c15783170adf2582a65f18a5cd4d2-43
-            version_id: e7842630-7a4e-45e6-9448-044db881f70b
+            version_id: cfe05902-acc7-4bb8-8583-a4b4ee063537
       - relpath: blobs/3dbb2cf43b7d63b00d2fd65e77d1522abf82562b
         md5: 3fd33a2bd999bf8fbfea9fd64e6d6770
         size: 781
         cloud:
           minio:
             etag: 3fd33a2bd999bf8fbfea9fd64e6d6770
-            version_id: 425b8cad-b70b-4801-8e7b-727e7dec5041
+            version_id: 6b08d85b-9b4a-4aba-8376-9af3bc701c7e
       - relpath: blobs/6cd1d9021e10d47aed59399af6b0e30312b46ca4
         md5: 72e6c8ab541f1ff24b139c96216fe8c9
         size: 150
         cloud:
           minio:
             etag: 72e6c8ab541f1ff24b139c96216fe8c9
-            version_id: 2b22b783-afe6-47e0-a50e-6e2985231f2f
+            version_id: b615f738-1e21-473b-a6a8-a38ba677a76e
       - relpath: blobs/be40185617dee2e5940b7ad8c9aec5fc8babcf2a
         md5: 6151a01f28dc31a96d6933ff0648c85c
         size: 9096735
         cloud:
           minio:
             etag: 6151a01f28dc31a96d6933ff0648c85c
-            version_id: 0c68cc08-1b58-405b-885a-f375afcd4e2a
+            version_id: 5ffe9dec-29e1-4173-a57d-13cc2fc4bada
       - relpath: blobs/cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865
         md5: bf25eb5120ad92ef5c7d8596b5dc4046
         size: 5069051
         cloud:
           minio:
             etag: bf25eb5120ad92ef5c7d8596b5dc4046
-            version_id: 2cde6aec-4685-47af-b038-3d8e13ec82ed
+            version_id: 09d4492a-1e08-40f7-90fe-f358895358a2
       - relpath: blobs/ee317c016226c12022b10f06e5f95f53c284407e
         md5: cdbd02dc6d8c7a736ddb383d85d85877
         size: 516
         cloud:
           minio:
             etag: cdbd02dc6d8c7a736ddb383d85d85877
-            version_id: e2389df6-837c-46ec-9684-a3b026fa49b0
+            version_id: 67b18aee-a69b-4c5c-96ad-b7307f2c941d
       - relpath: refs/main
         md5: 5b82c7d5b69fd14015bda8a3573af1ec
         size: 40
         cloud:
           minio:
             etag: 5b82c7d5b69fd14015bda8a3573af1ec
-            version_id: 508024ee-76ba-45c5-a8a0-581df443e750
+            version_id: 42f4e219-8f52-4b19-b30d-512106f4f3e7
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/config.json
         md5: 3fd33a2bd999bf8fbfea9fd64e6d6770
         size: 781
         cloud:
           minio:
             etag: 3fd33a2bd999bf8fbfea9fd64e6d6770
-            version_id: 92dce4cc-3607-4498-8059-5bbf41e23627
+            version_id: 15420fd5-b31e-4e5c-a49e-e500b02bc275
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/pytorch_model.bin
         md5: 85428479f4a9f2b2896783468970ce57
         size: 2235540992
         cloud:
           minio:
             etag: 7f2c15783170adf2582a65f18a5cd4d2-43
-            version_id: 7e1c55d1-3b70-4bc1-9f54-c6f5b4b01e76
+            version_id: 7bf747a2-acfb-46be-8392-7f26b1515635
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/sentencepiece.bpe.model
         md5: bf25eb5120ad92ef5c7d8596b5dc4046
         size: 5069051
         cloud:
           minio:
             etag: bf25eb5120ad92ef5c7d8596b5dc4046
-            version_id: 1c38d153-33af-4cde-83b4-678b5554fe8d
+            version_id: b2a4b331-db57-4bff-ab72-02968e26b1df
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/special_tokens_map.json
         md5: 72e6c8ab541f1ff24b139c96216fe8c9
         size: 150
         cloud:
           minio:
             etag: 72e6c8ab541f1ff24b139c96216fe8c9
-            version_id: 84705989-cf97-47f5-9081-edf3244c258c
+            version_id: d5de5c3b-3514-464e-b962-6be2eabb848d
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/tokenizer.json
         md5: 6151a01f28dc31a96d6933ff0648c85c
         size: 9096735
         cloud:
           minio:
             etag: 6151a01f28dc31a96d6933ff0648c85c
-            version_id: d042124d-7eca-4b38-a4a8-c74dfa6742d4
+            version_id: 96006a69-4147-4386-b7b6-b86e0845c036
       - relpath: snapshots/6cc14366f0cc95428a695d30594a93dd6935d800/tokenizer_config.json
         md5: cdbd02dc6d8c7a736ddb383d85d85877
         size: 516
         cloud:
           minio:
             etag: cdbd02dc6d8c7a736ddb383d85d85877
-            version_id: 6cc9f998-fcdd-4cc4-9142-64490de71a0c
+            version_id: 62674e75-a8be-481d-86ba-3fdfcf480c51
+  get_final_df:
+    cmd: python src/data/get_final_df.py --df_tagged_path="data/intermediate_data/df_tagged.parquet"
+      --save_path="data/prepared_data/prepared_df.parquet"
+    deps:
+    - path: config.yaml
+      hash: md5
+      md5: 426b96727f7279748f8b2a6bf8d4bfec
+      size: 581
+    - path: src/data/get_final_df.py
+      hash: md5
+      md5: 10ace66a77c960366ef8b1ea90618844
+      size: 1187
+    outs:
+    - path: data/prepared_data/prepared_df.parquet
+      hash: md5
+      md5: 5ce509c51893e88643f7801bd7c03f99
+      size: 16789
+      cloud:
+        minio:
+          etag: 5ce509c51893e88643f7801bd7c03f99
+          version_id: 69a3427e-37f5-45b4-9623-aef393e007d1

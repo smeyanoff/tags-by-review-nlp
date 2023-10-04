@@ -7,12 +7,10 @@ import re
 import numpy as np
 import spacy
 import torch
-from dotenv import load_dotenv
 from nltk.corpus import stopwords
 from transformers import AutoModelForQuestionAnswering, AutoTokenizer
 from yaml import safe_load
 
-load_dotenv()
 with open("config.yaml", "r") as file:
     config = safe_load(file)["roberta"]
 

@@ -41,6 +41,10 @@ nltk = {extras = ["stopwords"], version = "^3.8.1"}
 spacy = "^3.7.0"
 
 
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.25.2"
+
 [[tool.poetry.source]]
 name = "PyPI"
 priority = "primary"

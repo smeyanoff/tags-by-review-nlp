@@ -39,3 +39,13 @@ stages:
         outs:
             - data/intermediate_data/df_tagged.parquet
             - models/roberta/models--AlexKay--xlm-roberta-large-qa-multilingual-finedtuned-ru
+    get_final_df:
+        cmd: >-
+            python src/data/get_final_df.py
+            --df_tagged_path="data/intermediate_data/df_tagged.parquet"
+            --save_path="data/prepared_data/prepared_df.parquet"
+        deps:
+            - src/data/get_final_df.py
+            - config.yaml
+        outs:
+            - data/prepared_data/prepared_df.parquet
