@@ -4,7 +4,6 @@
 
 import re
 
-import numpy as np
 import spacy
 import torch
 from nltk.corpus import stopwords
@@ -103,28 +102,125 @@ class Pipeline:
             return [], ()
 
     def _clear_stopwords(self, answer: str) -> list:
+        try:
+            answer = answer.split(">")[1]
+        except IndexError:
+            pass
         stops = stopwords.words("russian")
         stops = [word for word in stops if word not in self._norm_words]
 
         corpus = answer.split(" ")
-        text_list = " ".join(
-            [word for word in corpus if word not in stops],
-        ).split(", ")
+        text = " ".join([word for word in corpus if word not in stops])
+        text_list = re.split(r', |\. |\.|,| а | и | просто | или ', text)
 
         return text_list
 
-    def _get_part_of_words(self, answer: str) -> dict:
-        document = self._nlp_model(answer)
-        doc_dict = {}
-        for token in document:
-            if token.pos_ not in self._stop_pos:
-                doc_dict[token.text] = {
-                    "lemma": token.lemma_,
-                    "pos": token.pos_,
-                    "dep": token.dep_,
-                }
+    def _get_parts(self, answer_cleared: list) -> (list[dict], list):
+        parts = []
+        roots_dep = []
+        for answer in answer_cleared:
+            document = self._nlp_model(answer)
+            doc_dict = {}
+            for token in document:
+                if token.pos_ not in "PUNCT":
+                    doc_dict[token.text] = {
+                        "lemma": token.lemma_,
+                        "pos": token.pos_,
+                        "dep": token.dep_,
+                    }
+                    if token.dep_ == "ROOT":
+                        roots_dep.append(token.pos_)
+        return (parts, roots_dep)
 
-        return doc_dict
+    def _return_tag(self, part: dict, root_dep: str) -> str:
+        tags = []
+        # для того, чтобы оставить только главное существительное
+        root_stop = False
+        # для того, чтобы возврщать слова из предложения, а не леммы
+        return_keys = False
+        single_word = True if len(part.keys()) == 1 else False
+        for num, key in enumerate(part.keys()):
+
+            if single_word:
+                tags.append(part[key]["lemma"])
+                continue
+
+            if root_stop:
+                break
+
+            # should return keys?
+            if (
+                num == 0 and (
+                    (
+                        part[key]["dep"] == "case"
+                        or part[key]["dep"] == "advmod"
+                    )
+                    or (part[key]["dep"] == "nsubj")
+                    or (
+                        part[key]["pos"] == 'CCONJ'
+                        and part[key]["dep"] == 'cc' and num == 0
+                    )
+                    or (part[key]["pos"] == 'ROOT' and num == 0)
+                )
+            ):
+                return_keys = True
+
+            # should pass the word?
+            if (
+                (
+                    part[key]["pos"] == "ADV" and (
+                        part[key]["dep"]
+                        == "advmod" or part[key]["dep"] == "punct"
+                    )
+                )
+                or (part[key]["dep"] == ['nmod'] and num == 0)
+                or (
+                    part[key]["pos"] == 'CCONJ'
+                    and part[key]["dep"] == 'cc' and num == 0
+                )
+            ):
+                continue
+
+            if root_dep == 'VERB':
+                if part[key]["dep"] == "ROOT":
+                    if return_keys:
+                        tags.append(key)
+                    else:
+                        tags.append(part[key]["lemma"])
+                elif part[key]["dep"] == "mark":
+                    continue
+                else:
+                    if part[key]["dep"] == 'xcomp' and len(tags) == 1:
+                        tags.pop(0)
+                    tags.append(key)
+
+            elif root_dep == "NOUN":
+                if part[key]["dep"] == "ROOT":
+                    if return_keys:
+                        tags.append(key)
+                    else:
+                        tags.append(part[key]["lemma"])
+                    if num != 0:
+                        root_stop = True
+                else:
+                    tags.append(part[key]["lemma"])
+
+            elif root_dep == "ADJ":
+                if part[key]["dep"] == "mark":
+                    continue
+                else:
+                    tags.append(key)
+
+            elif root_dep == "ADV":
+                tags.append(key)
+
+            elif root_dep == "NUM":
+                tags.append(key)
+
+            else:
+                tags.append(part[key]["lemma"])
+
+        return " ".join(tags)
 
     def get_tags(
         self,
@@ -140,28 +236,22 @@ class Pipeline:
         return: list[str] - list of tags
         """
         answer, probas = self.answer(article_text, question, proba)
-        if not answer:
+        if (
+            not answer or
+            answer == '' or
+            answer == question.lower().replace('?', '')
+        ):
             return []
+        # clear answer
         answer_cleared = self._clear_stopwords(answer)
 
-        parts = []
-        for token in answer_cleared:
-            parts.append(self._get_part_of_words(token))
-            logic = [
-                [part[key]["dep"] == "ROOT" for key in part.keys()]
-                for part in parts
-            ]
-        try:
-            logic = np.reshape(logic, -1)
-        except ValueError:
-            return []
-        if all(condition for condition in logic):
-            tags = [
-                [part[key]["lemma"] for key in part.keys()]
-                for part in parts
-            ]
-        else:
-            tags = [[key for key in part.keys()] for part in parts]
-            if np.sum(logic) == 1:
-                tags = [" ".join(tags[0])]
-        return [np.reshape(tags, -1), probas]
+        parts, roots_dep = self._get_parts(answer_cleared)
+
+        tags = []
+        for part, root_dep in zip(parts, roots_dep):
+            if part:
+                if len(part.keys()) == 1:
+                    tags.append(list(part.keys())[0])
+                else:
+                    tags.append(self._return_tag(part, root_dep))
+        return [tags, probas]
