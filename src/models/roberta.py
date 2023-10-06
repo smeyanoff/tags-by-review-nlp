@@ -139,9 +139,12 @@ class Pipeline:
         # для того, чтобы возврщать слова из предложения, а не леммы
         return_keys = False
         single_word = True if len(part.keys()) == 1 else False
+
         for num, key in enumerate(part.keys()):
 
             if single_word:
+                if part[key]["pos"] == 'ADP':
+                    continue
                 tags.append(part[key]["lemma"])
                 continue
 
@@ -158,9 +161,16 @@ class Pipeline:
                     or (part[key]["dep"] == "nsubj")
                     or (
                         part[key]["pos"] == 'CCONJ'
-                        and part[key]["dep"] == 'cc' and num == 0
+                        and part[key]["dep"] == 'cc'
                     )
-                    or (part[key]["pos"] == 'ROOT' and num == 0)
+                    or (
+                        part[key]["dep"] == 'ROOT'
+                        and part[key]["pos"] != 'NOUN'
+                    )
+                    or (
+                        part[key]["pos"] == 'ADJ'
+                        and part[key]["dep"] == 'amod'
+                    )
                 )
             ):
                 return_keys = True
@@ -168,39 +178,62 @@ class Pipeline:
             # should pass the word?
             if (
                 (
-                    part[key]["pos"] == "ADV" and (
-                        part[key]["dep"]
-                        == "advmod" or part[key]["dep"] == "punct"
+                    part[key]["pos"] == "ADV"
+                    and (
+                        part[key]["dep"] == "advmod"
+                        or part[key]["dep"] == "punct"
+                        or part[key]["dep"] == "ROOT"
                     )
+                    and (num+1 != len(part.keys()) or num == 0)
                 )
-                or (part[key]["dep"] == ['nmod'] and num == 0)
+                or (
+                    part[key]["dep"] == ['nmod']
+                    and num == 0
+                )
                 or (
                     part[key]["pos"] == 'CCONJ'
-                    and part[key]["dep"] == 'cc' and num == 0
+                    and part[key]["dep"] == 'cc'
+                    and num == 0
+                )
+                or (
+                    part[key]["dep"] == "mark"
+                    and root_dep == 'VERB'
+                )
+                or (
+                    part[key]["dep"] == 'iobj'
+                    and part[key]["pos"] == 'NOUN'
+                    and num+1 != len(part.keys())
+                )
+                or (
+                    part[key]["pos"] == 'NOUN'
+                    and part[key]["dep"] == 'obj'
+                )
+                or (
+                    part[key]["pos"] == 'DET'
+                    and part[key]["dep"] == 'det'
+                    and num == 0
                 )
             ):
                 continue
 
             if root_dep == 'VERB':
-                if part[key]["dep"] == "ROOT":
-                    if return_keys:
-                        tags.append(key)
-                    else:
-                        tags.append(part[key]["lemma"])
-                elif part[key]["dep"] == "mark":
-                    continue
+                if return_keys:
+                    tags.append(key)
                 else:
-                    if part[key]["dep"] == 'xcomp' and len(tags) == 1:
-                        tags.pop(0)
+                    tags.append(part[key]["lemma"])
+
+                if part[key]["dep"] == 'xcomp' and len(tags) == 1:
+                    tags.pop(0)
                     tags.append(key)
 
             elif root_dep == "NOUN":
-                if part[key]["dep"] == "ROOT":
-                    if return_keys:
-                        tags.append(key)
-                    else:
-                        tags.append(part[key]["lemma"])
-                    if num != 0:
+                if return_keys:
+                    tags.append(key)
+                    if (
+                        num != 0
+                        and part[key]["dep"] == "ROOT"
+                        and num != len(part.keys()) - 2
+                    ):
                         root_stop = True
                 else:
                     tags.append(part[key]["lemma"])
@@ -215,6 +248,8 @@ class Pipeline:
                 tags.append(key)
 
             elif root_dep == "NUM":
+                tags.append(key)
+            elif root_dep == 'PRON':
                 tags.append(key)
 
             else:
@@ -241,7 +276,7 @@ class Pipeline:
             answer == '' or
             answer == question.lower().replace('?', '')
         ):
-            return []
+            return [[], []]
         # clear answer
         answer_cleared = self._clear_stopwords(answer)
 
