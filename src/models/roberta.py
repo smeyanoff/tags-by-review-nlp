@@ -130,6 +130,7 @@ class Pipeline:
                     }
                     if token.dep_ == "ROOT":
                         roots_dep.append(token.pos_)
+            parts.append(doc_dict)
         return (parts, roots_dep)
 
     def _return_tag(self, part: dict, root_dep: str) -> str:
@@ -143,11 +144,15 @@ class Pipeline:
         for num, key in enumerate(part.keys()):
 
             if single_word:
-                if part[key]["pos"] == 'ADP':
+                if (
+                    part[key]["pos"] == 'ADP'
+                    or part[key]["pos"] == 'PART'
+                ):
                     continue
                 tags.append(part[key]["lemma"])
                 continue
 
+            # should break the loop
             if root_stop:
                 break
 
@@ -171,6 +176,10 @@ class Pipeline:
                         part[key]["pos"] == 'ADJ'
                         and part[key]["dep"] == 'amod'
                     )
+                    or (
+                        part[key]["pos"] == 'NOUN'
+                        and part[key]["dep"] == 'obl'
+                    )
                 )
             ):
                 return_keys = True
@@ -178,9 +187,17 @@ class Pipeline:
             # should pass the word?
             if (
                 (
+                    part[key]["pos"] == 'ADP'
+                    and part[key]["dep"] == 'case'
+                    and num == 0
+                )
+                or (
                     part[key]["pos"] == "ADV"
                     and (
-                        part[key]["dep"] == "advmod"
+                        (
+                            part[key]["dep"] == "advmod"
+                            and num != 0
+                        )
                         or part[key]["dep"] == "punct"
                         or part[key]["dep"] == "ROOT"
                     )
@@ -236,7 +253,10 @@ class Pipeline:
                     ):
                         root_stop = True
                 else:
-                    tags.append(part[key]["lemma"])
+                    if tags:
+                        tags.append(part[key]["lemma"])
+                    else:
+                        tags.append(key)
 
             elif root_dep == "ADJ":
                 if part[key]["dep"] == "mark":
@@ -277,6 +297,7 @@ class Pipeline:
             answer == question.lower().replace('?', '')
         ):
             return [[], []]
+
         # clear answer
         answer_cleared = self._clear_stopwords(answer)
 
@@ -284,9 +305,6 @@ class Pipeline:
 
         tags = []
         for part, root_dep in zip(parts, roots_dep):
-            if part:
-                if len(part.keys()) == 1:
-                    tags.append(list(part.keys())[0])
-                else:
-                    tags.append(self._return_tag(part, root_dep))
+            tags.append(self._return_tag(part, root_dep))
+
         return [tags, probas]

@@ -23,6 +23,8 @@ stages:
             --tags_path="data/initial_data/tags.parquet"
             --save_path="data/intermediate_data/comments_tags.parquet"
         deps:
+            - data/initial_data/comments.parquet
+            - data/initial_data/tags.parquet
             - src/data/prepare_data.py
             - config.yaml
         outs:
@@ -33,18 +35,20 @@ stages:
             --df_path="data/intermediate_data/comments_tags.parquet"
             --save_path="data/intermediate_data/df_tagged.parquet"
         deps:
+            - data/intermediate_data/comments_tags.parquet
             - src/data/get_tags.py
             - src/models/roberta.py
             - config.yaml
+            - models/roberta/models--AlexKay--xlm-roberta-large-qa-multilingual-finedtuned-ru
         outs:
             - data/intermediate_data/df_tagged.parquet
-            - models/roberta/models--AlexKay--xlm-roberta-large-qa-multilingual-finedtuned-ru
     get_final_df:
         cmd: >-
             python src/data/get_final_df.py
             --df_tagged_path="data/intermediate_data/df_tagged.parquet"
             --save_path="data/prepared_data/prepared_df.parquet"
         deps:
+            - data/intermediate_data/df_tagged.parquet
             - src/data/get_final_df.py
             - config.yaml
         outs:
